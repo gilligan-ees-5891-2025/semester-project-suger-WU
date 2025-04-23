@@ -1,8 +1,8 @@
 ---
-title: "Put the title of your project here"
+title: "Impacts of Fire and Edge Effects on Vegetation Growth in the Southern Amazon"
 subtitle: "EES 4891/5891: Probability and Statistics for Geosciences"
-author: "Put your name here"
-date: last-modified
+author: "Xiuyi Wu"
+date: Apr 22,2025
 ---
 
 ## Setup
@@ -19,7 +19,12 @@ library(scales)
 library(tidyverse)
 
 # maybe include other libraries:
-# library(tidymodels)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(plotrix)
+library(stringr)
+library(GGally)
 
 # set up default plotting format for ggplot2 graphs
 theme_set(theme_bw())
@@ -27,13 +32,92 @@ theme_set(theme_bw())
 
 ## Introduction
 
-Write the introduction: describe what data you're going to study, why you're interested in it, where you obtained the data, and any other relevant background.
+Amazon deforestation has long been a major focus of research. However, recent studies show that in addition to deforestation, logging, fires, edge effects, and extreme droughts are also contributing to the gradual degradation of the Amazon forest. Similar to deforestation, forest degradation can result in substantial carbon loss, which negatively affects efforts to mitigate global climate change.
 
-### Date set
+I am currently analyzing forest inventory data from the Fazenda Tanguro site in Mato Grosso State, Brazil. The study site is located 30 km north of the southern boundary of the Amazon rain forest, in the driest part of the basin (13°04′S, 52°23′W), where a prolonged dry season lasts 4–5 months and annual precipitation averages 1,770 mm. The experimental area includes three adjacent 50-hectare plots that were burned annually (B1yr), every three years (B3yr), or not at all (Control) between 2004 and 2010. Plot C corresponds to the B1yr treatment, Plot B to B3yr, and Plot A is the unburned control.
 
-Describe your data set: what data are you looking at? Where did you get it from (cite publications if relevant), etc. Describe what the data is: what variables are measured, how many observations (rows in a data table) does it contain, etc.
+Additionally, the northern edge of the study area borders agricultural land, while the other directions are adjacent to primary, undisturbed forest. According to previous studies, the area extending 0–200 meters from the forest edge into the interior is defined as the "edge forest." Lacking the protective buffer of surrounding forest, edge forests experience rapid shifts in microclimate conditions—such as higher temperatures, stronger winds, and lower humidity. These environmental stresses increase large tree mortality and lead to shifts in species composition.
 
-You may want to incude code to read the data in.
+Therefore, based on this data set, I aim to investigate how edge effects and fire influence vegetation growth in the Amazon forest.
+
+## Dataset
+
+This dataset was provided by the first research collaborator of my PhD program. Detailed descriptions of the data can be found in Brando et al. (GCB, 2019). In this dataset, they conducted pre‐ and postfire inventories across the three treatment plots. But I just want to focus on the post-fire research. Since July 2004, they tagged, mapped, and measured diameter at breast height (dbh) of trees and lianas in different strata for each treatment. Within each 50‐ha treatment plot, they sampled all trees ≥40 cm dbh. And then sampled trees and lianas with 20–39.9 cm dbh along six transects, which ran parallel with the edge of the agricultural field at 10, 30, 100, 250, 500, and 750 m from the edge (500 × 20 m). Nested subsampling was conducted within these transects to measure trees and lianas with 10–19.9 cm dbh (500 × 4 m). They repeated these inventories annually within each 50‐ha plot. To guarantee the same point of measurement in each visit, they used a 1.3‐m ruler.
+
+The variables I am interested in are the sampling location and the dbh size (three different class) of the sampled trees. I plan to use location information to distinguish edge forests from interior forests, as well as the frequency of fires. The fire experiment ended in 2010, so I plan to just select the 2012 forest inventory data for analysis.
+
+The three types of trees with different dbh are stored in three csv files respectively. There is also a meta-file description document about the data variable names in the mydata folder of the git directory for viewing.
+
+##The entire study area can be divided into 6 sub-areas through the Parcela variable and the zone variable we created in the following code. We can know the dbh information of trees of different classes in each sub-area. dap.12 is the variable about dbh of tree.
+
+```{r data introduction}
+t_d40 <- read.csv("mydata/master40_area1_julho_2024_edit.csv",header = TRUE)
+t_d1020 <- read.csv("mydata/master1020_area1_julho_2024_edit.csv",header = TRUE)
+t_d510 <- read.csv("mydata/master510_area1_julho_2024_edit.csv",header = TRUE)
+
+#1.Subset interesting data, filter alive tree dataset in 2012
+##(1)master40
+t_yr_d40<-t_d40 %>% filter(dap.12>0 & mv.12=='v') 
+newt_d40<-t_yr_d40%>% dplyr::select("placa","parcela","codigo","genero","nomecomum","linha","lodist","lo","nsdist","dap.12","data12","mv.12")
+newt_d40<-na.omit(newt_d40)
+
+##(2)master1020
+t_yr_d1020<-t_d1020 %>% filter(dap.12>0 & mv.12=='v')
+newt_d1020<-t_yr_d1020%>% dplyr::select("placa","parcela","codigo","genero","especie","nomecomum","ns","transecto","distancia","metragem","dap.12","data12","mv.12")
+newt_d1020<-na.omit(newt_d1020)
+
+
+##(3)master510
+t_yr_d510<-t_d510%>%filter(dap.12>0 & mv.12=='v')
+newt_d510<-t_yr_d510%>% dplyr::select("placa","parcela","codigo","genero","especie","nomecomum","metragem","nsdist","ns","transecto","dap.12","data12","mv.12")
+newt_d510<-na.omit(newt_d510)
+
+
+#2.Distinguishing edge forests from interior forests
+##(1)master40
+lines_linha<-c("1"=0,"2"=50,"3"=100,"4"=150,"5"=200,"6"=250,"7"=300,"8"=350,"9"=400,"10"=450,
+                 "11"=500,"12"=550,"13"=600,"14"=650,"15"=700,"16"=750,"17"=800,"18"=850,"19"=900,"20"=950,
+                 "21"=1000,"22"=1050,"23"=1100,"24"=1150,"25"=1200,"26"=1250,"27"=1300,"28"=1350,"29"=1400,"30"=1450,"31"=1500)
+tran_lo<-c("L"=-1,"O"=1)
+newt_d40$gx<-unname(lines_linha[newt_d40$linha])+newt_d40$lodist*unname(tran_lo[newt_d40$lo])
+newt_d40$gy<-newt_d40$nsdist
+newt_d40 <- newt_d40 %>%
+  mutate(zone = case_when(
+    gy >= 0 & gy <= 200 ~ "edge",
+    gy > 200 & gy <= 1000 ~ "interior"
+  ))
+
+##(2)master1020
+trans<-c("A"=0,"AA"=10,"AB"=30,"C"=100,"F"=250,"K"=500,"P"=750)
+newt_d1020$gy<-unname(trans[newt_d1020$transecto])+newt_d1020$distancia
+newt_d1020$gx<-newt_d1020$metragem
+newt_d1020<-newt_d1020 %>% 
+  filter(newt_d1020$gy>=0)
+
+d20_39.9_newt_d1020<-newt_d1020 %>% filter(dap.12>=20 & dap.12<40)
+d10_19.9_newt_d1020<-newt_d1020 %>% filter(dap.12>=10 & dap.12<20)
+
+newt_d1020 <- newt_d1020 %>%
+  mutate(zone = case_when(
+    gy >= 0 & gy <= 200 ~ "edge",
+    gy > 200 & gy <= 1000 ~ "interior"
+  ))
+
+##(3)master510
+trans<-c("A"=0,"AA"=10,"AB"=30,"C"=100,"F"=250,"K"=500,"P"=750)
+newt_d510$gx<-newt_d510$metragem
+newt_d510$gy<-unname(trans[newt_d510$transecto])+newt_d510$nsdist
+
+newt_d510 <- newt_d510 %>%
+  mutate(zone = case_when(
+    gy >= 0 & gy <= 200 ~ "edge",
+    gy > 200 & gy <= 1000 ~ "interior"
+  ))
+
+head(newt_d40)
+head(newt_d1020)
+head(newt_d510)
+```
 
 ## Descriptive Statistics
 
@@ -41,11 +125,99 @@ Put code and text to calculate and present descriptive statistics for your data.
 
 Describe the probability distribution of the data: is it normal or some other distribution? Histograms and Q-Q plots can be helpful here.
 
+##According to parcela (three types of fire treatments: Control, B3yr, B1yr) and zone (edge ​​and interior) variables, the data is divided into six groups.
+
+IA: Interior Control
+
+IB: Interior B3yr
+
+IC: Interior B1yr
+
+EA: Edge Control
+
+EB: Edge B3yr
+
+EC: Edge B1yr
+
+```{r descriptive statistics}
+d40<-newt_d40[,c("parcela","dap.12","zone")]
+d1020<-newt_d1020[,c("parcela","dap.12","zone")]
+d510<-newt_d510[,c("parcela","dap.12","zone")]
+
+d40$dbh_class<-"dbh of 40 cm"
+d1020$dbh_class<-"dbh greater than 10 cm"
+d510$dbh_class<-"dbh greater than 5 cm"
+
+all_data <- bind_rows(d40, d510, d1020)
+
+all_data <- all_data %>%
+  mutate(parcela = case_when(
+    parcela == "A" ~ "Control",
+    parcela == "B" ~ "B3yr",
+    parcela == "C" ~ "B1yr",
+  ))
+
+
+summary_stats <- all_data %>%
+  group_by(parcela, zone) %>%
+  summarise(
+    tree_count = n(),
+    mean_dap = mean(dap.12, na.rm = TRUE),
+    median_dap = median(dap.12, na.rm = TRUE),
+    sd_dap = sd(dap.12, na.rm = TRUE),
+    min_dap = min(dap.12, na.rm = TRUE),
+    max_dap = max(dap.12, na.rm = TRUE)
+  ) %>%
+  arrange(parcela, zone)
+
+print(summary_stats)
+
+ggplot(all_data, aes(x = dap.12, fill = parcela)) +
+  geom_histogram(binwidth = 2, alpha = 0.8, position = "dodge", color = "black") +
+  facet_wrap(parcela~zone,nrow=3) +
+  theme_minimal() +
+  labs(title = "Histogram of DBH (dap.12) by Fire Treatment (within each Zone)",
+       x = "DBH (cm)", y = "Count") +
+  scale_fill_brewer(palette = "Set1")+
+  labs(fill = "Fire Condition") +
+  theme(
+    plot.title = element_text(size = 18, face = "bold", hjust = 0.5),  
+    axis.title = element_text(size = 12),  
+    axis.text = element_text(size = 12),   
+    legend.title = element_text(size = 6), 
+    legend.text = element_text(size = 6),  
+    strip.text = element_text(size = 12)  
+  )
+
+#kernel-density plots
+ggplot(all_data, aes(x = dap.12, fill = parcela)) +
+  geom_density(alpha = 0.6, color = NA) +
+  facet_wrap(~zone) +
+  labs(
+    title = "Kernel Density of DBH by Fire Condition",
+    x = "DBH (cm)",
+    y = "Density",
+    fill = "Fire Condition"
+  ) +
+  scale_fill_brewer(palette = "Set1") +
+  theme_minimal(base_size = 16) +
+  theme(
+    plot.title = element_text(size = 20, face = "bold", hjust = 0.5),
+    axis.title = element_text(size = 16),
+    axis.text = element_text(size = 7),
+    legend.title = element_text(size = 16),
+    legend.text = element_text(size = 14),
+    strip.text = element_text(size = 16, face = "bold")
+  )
+
+
+```
+
+\
+
 ## Research Questions
 
-This is a place to describe the research questions you want to ask about your data.
-
-It's helpful to use tables and/or graphs to illustrate what you're thinking about and what questions you want to ask.
+My research question is how edge effects and fire influence vegetation growth in the Amazon rain forest?
 
 ## Hypotheses and Tests
 
@@ -53,22 +225,97 @@ State hypotheses about your data and describe how you will use tests to test the
 
 Put code to implement the analysis and hypothesis tests, and include interpretations of thee
 
-### Hypotheses
+### Hypotheses and Methods
 
-State your hypothesis or hypotheses
+Hypothesis 1: Edge effects negatively affect vegetation growth
 
-### Methods
+Hypothesis: Edges have smaller tree DBH than that of interiors.
 
-Describe the methods you'll use to analyze your data in preparation for testing hypotheses. Include the analysis code.
+Analysis: One-Way ANOVA was used to compare differences in vegetation growth rates (e.g., DBH) between edge and interior.
+
+Hypothesis 2: Fire frequency and intensity negatively affect vegetation growth
+
+Hypothesis: Areas that experienced fire (B1yr or B3yr) had lower vegetation growth rates than areas that did not experience fire (control). The mean dbh was smallest for trees burned once a year(B1yr), as fire frequency was the highest.
+
+Analysis: One-Way ANOVA was used to compare differences in vegetation growth rates between different fire frequency treatments (B1yr, B3yr, control).
+
+Hypothesis 3: There are significant differences in dhb between different fire intensities in edge forests and interior forests
+
+Hypothesis：It is expected that the mean dbh of the unburned group will be greater than that of the burned group in the edge forest and interior forest groups.
+
+Analysis: One-Way ANOVA was used to compare differences.
+
+Hypothesis 4: The interaction between edge effect and fire affects vegetation growth
+
+Hypothesis: The combined effect of edge effect and fire has a greater negative impact on vegetation growth than the edge effect or fire effect alone.
+
+Analysis: Two-Way ANOVA was used to consider the interaction between **edge effect (edge ​​vs. interior) and fire frequency (B1yr, B3yr, control)** on vegetation growth.
 
 ### Hypothesis Tests
 
-Details about the hypothesis tests, including code
+```{r data analysis}
+all_data$zone<-as.factor(all_data$zone)
+all_data$parcela<-as.factor(all_data$parcela)
+#H1
+# One-way ANOVA: edge effect vs inland areas
+# Compare the effects of 'zone' (edge, interior) on DBH (dap.12)
+anova_edge <- aov(dap.12 ~ zone, data = all_data)
+summary(anova_edge)
+
+
+#H2
+# One-way ANOVA: The effect of different fire conditions on DBH
+# Compare the effects of 'fire_condition' (control, B1yr, B3yr) on DBH (dap.12)
+anova_fire <- aov(dap.12 ~ parcela, data = all_data)
+summary(anova_fire)
+
+
+#H3
+edge_data <- subset(all_data, zone == "edge")
+interior_data <- subset(all_data, zone == "interior")
+
+# ANOVA for edge
+anova_edge_only <- aov(dap.12 ~ parcela, data = edge_data)
+summary(anova_edge_only)
+
+# Tukey HSD post-hoc for edge
+tukey_edge <- TukeyHSD(anova_edge_only)
+print(tukey_edge)
+
+
+# ANOVA for interior
+anova_interior_only <- aov(dap.12 ~ parcela, data = interior_data)
+summary(anova_interior_only)
+
+# Tukey HSD post-hoc for interior
+tukey_interior <- TukeyHSD(anova_interior_only)
+print(tukey_interior)
+
+
+#H4
+# Two-factor ANOVA: edge effect * Interaction of fire treatment on DBH
+# Compare the interactions of 'zone' (edge, interior) and 'fire_condition' (control, B1yr, B3yr) on DBH (dap.12)
+anova_interaction <- aov(dap.12 ~ zone * parcela, data = all_data)
+summary(anova_interaction)
+
+interaction.plot(all_data$zone, all_data$parcela, all_data$dap.12, 
+                 xlab = "Zone", ylab = "DBH (cm)", trace.label = "Fire Condition")
+
+
+```
 
 ### Results and Discussion
 
-Results from your hypothesis tests and discussion, interpreting your results
+There is no doubt edge effects and fire negatively affect vegetation growth. In the edge area, the diameter growth (DBH) of vegetation in areas that experienced fire (either 1 or 3 years ago) was significantly reduced compared to the unburned area, and the DBH of vegetation in B1yr was the smallest. This supports the hypothesis that fire has a negative impact on vegetation growth.
+
+However, the DBH of the Control (never fired) sample is smaller than that of both B1yr and B3yr samples. Contrary to expectations, it means that the B3yr sample has formed a more favorable light or nutrient environment after the fire, which promotes the rapid growth of certain plants (such as germination or pioneer species). Or the fire did not involve all the big trees, but instead cleared the lower vegetation to promote the accelerated growth of the advantageous big trees.
+
+At last, the combined effect of edge effect and fire has a greater negative impact on vegetation growth than the edge effect or fire effect alone.
 
 ## Conclusions
 
-What did you learn? What results would a reader be interested in? What would be the next steps if you were to continue studying this data after the end of the semester?
+This study found that edgel effect and fire treatment had significant effects on tree growth (measured by breast diameter DBH) in Amazon forests. The tree DBH in the edge zone is significantly lower than interior zones, supporting the hypothesis that edge effects have a negative impact on vegetation growth. At the same time, under the treatment of different fire frequencies, samples with higher fire frequencies (such as B1yr) tend to show lower DBH, while samples with unfired (Control) or longer recovery period (B3yr) are relatively higher.
+
+It is worth noting that in the interior forest areas, the DBH of the B3yr sample is even higher than that of the control group, which may be related to factors such as reduced competitive pressure after fire and rapid growth of pioneer species. This phenomenon suggests that the long-term impact of fire may not be linear, but may also be regulated by spatial location. In addition, there is a significant interaction between fire and edge effects, and the negative impact of vegetation in marginal areas after experiencing fire is more obvious.
+
+If further research is conducted, more ecological variables can be considered, such as species richness, tree mortality, canopy height, etc., or the structural differences between sample sites can be controlled using a mixed effect model. In addition, combining spatial locations (such as distance from edges) and time series data will help to gain a deep understanding of the long-term effects of fire and edge effects on forest structure and function. The differences in responses of different tree species to interference can also be explored to further reveal the community succession mechanism.

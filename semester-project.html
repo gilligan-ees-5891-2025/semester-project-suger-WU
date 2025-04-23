@@ -6,10 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Put your name here">
-<meta name="dcterms.date" content="2025-04-08">
+<meta name="author" content="Xiuyi Wu">
+<meta name="dcterms.date" content="2025-04-22">
 
-<title>Put the title of your project here</title>
+<title>Impacts of Fire and Edge Effects on Vegetation Growth in the Southern Amazon</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -81,7 +81,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Put the title of your project here</h1>
+<h1 class="title">Impacts of Fire and Edge Effects on Vegetation Growth in the Southern Amazon</h1>
 <p class="subtitle lead">EES 4891/5891: Probability and Statistics for Geosciences</p>
 </div>
 
@@ -92,14 +92,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Author</div>
     <div class="quarto-title-meta-contents">
-             <p>Put your name here </p>
+             <p>Xiuyi Wu </p>
           </div>
   </div>
     
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">April 8, 2025</p>
+      <p class="date">April 22, 2025</p>
     </div>
   </div>
   
@@ -120,55 +120,416 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># maybe include other libraries:</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># library(tidymodels)</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># set up default plotting format for ggplot2 graphs</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_bw</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(plotrix)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GGally)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># set up default plotting format for ggplot2 graphs</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_bw</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="introduction" class="level2">
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
-<p>Write the introduction: describe what data you’re going to study, why you’re interested in it, where you obtained the data, and any other relevant background.</p>
-<section id="date-set" class="level3">
-<h3 class="anchored" data-anchor-id="date-set">Date set</h3>
-<p>Describe your data set: what data are you looking at? Where did you get it from (cite publications if relevant), etc. Describe what the data is: what variables are measured, how many observations (rows in a data table) does it contain, etc.</p>
-<p>You may want to incude code to read the data in.</p>
+<p>Amazon deforestation has long been a major focus of research. However, recent studies show that in addition to deforestation, logging, fires, edge effects, and extreme droughts are also contributing to the gradual degradation of the Amazon forest. Similar to deforestation, forest degradation can result in substantial carbon loss, which negatively affects efforts to mitigate global climate change.</p>
+<p>I am currently analyzing forest inventory data from the Fazenda Tanguro site in Mato Grosso State, Brazil. The study site is located 30 km north of the southern boundary of the Amazon rain forest, in the driest part of the basin (13°04′S, 52°23′W), where a prolonged dry season lasts 4–5 months and annual precipitation averages 1,770 mm. The experimental area includes three adjacent 50-hectare plots that were burned annually (B1yr), every three years (B3yr), or not at all (Control) between 2004 and 2010. Plot C corresponds to the B1yr treatment, Plot B to B3yr, and Plot A is the unburned control.</p>
+<p>Additionally, the northern edge of the study area borders agricultural land, while the other directions are adjacent to primary, undisturbed forest. According to previous studies, the area extending 0–200 meters from the forest edge into the interior is defined as the “edge forest.” Lacking the protective buffer of surrounding forest, edge forests experience rapid shifts in microclimate conditions—such as higher temperatures, stronger winds, and lower humidity. These environmental stresses increase large tree mortality and lead to shifts in species composition.</p>
+<p>Therefore, based on this data set, I aim to investigate how edge effects and fire influence vegetation growth in the Amazon forest.</p>
 </section>
+<section id="dataset" class="level2">
+<h2 class="anchored" data-anchor-id="dataset">Dataset</h2>
+<p>This dataset was provided by the first research collaborator of my PhD program. Detailed descriptions of the data can be found in Brando et al.&nbsp;(GCB, 2019). In this dataset, they conducted pre‐ and postfire inventories across the three treatment plots. But I just want to focus on the post-fire research. Since July 2004, they tagged, mapped, and measured diameter at breast height (dbh) of trees and lianas in different strata for each treatment. Within each 50‐ha treatment plot, they sampled all trees ≥40 cm dbh. And then sampled trees and lianas with 20–39.9 cm dbh along six transects, which ran parallel with the edge of the agricultural field at 10, 30, 100, 250, 500, and 750 m from the edge (500 × 20 m). Nested subsampling was conducted within these transects to measure trees and lianas with 10–19.9 cm dbh (500 × 4 m). They repeated these inventories annually within each 50‐ha plot. To guarantee the same point of measurement in each visit, they used a 1.3‐m ruler.</p>
+<p>The variables I am interested in are the sampling location and the dbh size (three different class) of the sampled trees. I plan to use location information to distinguish edge forests from interior forests, as well as the frequency of fires. The fire experiment ended in 2010, so I plan to just select the 2012 forest inventory data for analysis.</p>
+<p>The three types of trees with different dbh are stored in three csv files respectively. There is also a meta-file description document about the data variable names in the mydata folder of the git directory for viewing.</p>
+<p>##The entire study area can be divided into 6 sub-areas through the Parcela variable and the zone variable we created in the following code. We can know the dbh information of trees of different classes in each sub-area. dap.12 is the variable about dbh of tree.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>t_d40 <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"mydata/master40_area1_julho_2024_edit.csv"</span>,<span class="at">header =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>t_d1020 <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"mydata/master1020_area1_julho_2024_edit.csv"</span>,<span class="at">header =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>t_d510 <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"mydata/master510_area1_julho_2024_edit.csv"</span>,<span class="at">header =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co">#1.Subset interesting data, filter alive tree dataset in 2012</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="do">##(1)master40</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>t_yr_d40<span class="ot">&lt;-</span>t_d40 <span class="sc">%&gt;%</span> <span class="fu">filter</span>(dap<span class="fl">.12</span><span class="sc">&gt;</span><span class="dv">0</span> <span class="sc">&amp;</span> mv<span class="fl">.12</span><span class="sc">==</span><span class="st">'v'</span>) </span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>newt_d40<span class="ot">&lt;-</span>t_yr_d40<span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="st">"placa"</span>,<span class="st">"parcela"</span>,<span class="st">"codigo"</span>,<span class="st">"genero"</span>,<span class="st">"nomecomum"</span>,<span class="st">"linha"</span>,<span class="st">"lodist"</span>,<span class="st">"lo"</span>,<span class="st">"nsdist"</span>,<span class="st">"dap.12"</span>,<span class="st">"data12"</span>,<span class="st">"mv.12"</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>newt_d40<span class="ot">&lt;-</span><span class="fu">na.omit</span>(newt_d40)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="do">##(2)master1020</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>t_yr_d1020<span class="ot">&lt;-</span>t_d1020 <span class="sc">%&gt;%</span> <span class="fu">filter</span>(dap<span class="fl">.12</span><span class="sc">&gt;</span><span class="dv">0</span> <span class="sc">&amp;</span> mv<span class="fl">.12</span><span class="sc">==</span><span class="st">'v'</span>)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>newt_d1020<span class="ot">&lt;-</span>t_yr_d1020<span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="st">"placa"</span>,<span class="st">"parcela"</span>,<span class="st">"codigo"</span>,<span class="st">"genero"</span>,<span class="st">"especie"</span>,<span class="st">"nomecomum"</span>,<span class="st">"ns"</span>,<span class="st">"transecto"</span>,<span class="st">"distancia"</span>,<span class="st">"metragem"</span>,<span class="st">"dap.12"</span>,<span class="st">"data12"</span>,<span class="st">"mv.12"</span>)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>newt_d1020<span class="ot">&lt;-</span><span class="fu">na.omit</span>(newt_d1020)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="do">##(3)master510</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>t_yr_d510<span class="ot">&lt;-</span>t_d510<span class="sc">%&gt;%</span><span class="fu">filter</span>(dap<span class="fl">.12</span><span class="sc">&gt;</span><span class="dv">0</span> <span class="sc">&amp;</span> mv<span class="fl">.12</span><span class="sc">==</span><span class="st">'v'</span>)</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>newt_d510<span class="ot">&lt;-</span>t_yr_d510<span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="st">"placa"</span>,<span class="st">"parcela"</span>,<span class="st">"codigo"</span>,<span class="st">"genero"</span>,<span class="st">"especie"</span>,<span class="st">"nomecomum"</span>,<span class="st">"metragem"</span>,<span class="st">"nsdist"</span>,<span class="st">"ns"</span>,<span class="st">"transecto"</span>,<span class="st">"dap.12"</span>,<span class="st">"data12"</span>,<span class="st">"mv.12"</span>)</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>newt_d510<span class="ot">&lt;-</span><span class="fu">na.omit</span>(newt_d510)</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="co">#2.Distinguishing edge forests from interior forests</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="do">##(1)master40</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>lines_linha<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="st">"1"</span><span class="ot">=</span><span class="dv">0</span>,<span class="st">"2"</span><span class="ot">=</span><span class="dv">50</span>,<span class="st">"3"</span><span class="ot">=</span><span class="dv">100</span>,<span class="st">"4"</span><span class="ot">=</span><span class="dv">150</span>,<span class="st">"5"</span><span class="ot">=</span><span class="dv">200</span>,<span class="st">"6"</span><span class="ot">=</span><span class="dv">250</span>,<span class="st">"7"</span><span class="ot">=</span><span class="dv">300</span>,<span class="st">"8"</span><span class="ot">=</span><span class="dv">350</span>,<span class="st">"9"</span><span class="ot">=</span><span class="dv">400</span>,<span class="st">"10"</span><span class="ot">=</span><span class="dv">450</span>,</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"11"</span><span class="ot">=</span><span class="dv">500</span>,<span class="st">"12"</span><span class="ot">=</span><span class="dv">550</span>,<span class="st">"13"</span><span class="ot">=</span><span class="dv">600</span>,<span class="st">"14"</span><span class="ot">=</span><span class="dv">650</span>,<span class="st">"15"</span><span class="ot">=</span><span class="dv">700</span>,<span class="st">"16"</span><span class="ot">=</span><span class="dv">750</span>,<span class="st">"17"</span><span class="ot">=</span><span class="dv">800</span>,<span class="st">"18"</span><span class="ot">=</span><span class="dv">850</span>,<span class="st">"19"</span><span class="ot">=</span><span class="dv">900</span>,<span class="st">"20"</span><span class="ot">=</span><span class="dv">950</span>,</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"21"</span><span class="ot">=</span><span class="dv">1000</span>,<span class="st">"22"</span><span class="ot">=</span><span class="dv">1050</span>,<span class="st">"23"</span><span class="ot">=</span><span class="dv">1100</span>,<span class="st">"24"</span><span class="ot">=</span><span class="dv">1150</span>,<span class="st">"25"</span><span class="ot">=</span><span class="dv">1200</span>,<span class="st">"26"</span><span class="ot">=</span><span class="dv">1250</span>,<span class="st">"27"</span><span class="ot">=</span><span class="dv">1300</span>,<span class="st">"28"</span><span class="ot">=</span><span class="dv">1350</span>,<span class="st">"29"</span><span class="ot">=</span><span class="dv">1400</span>,<span class="st">"30"</span><span class="ot">=</span><span class="dv">1450</span>,<span class="st">"31"</span><span class="ot">=</span><span class="dv">1500</span>)</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>tran_lo<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="st">"L"</span><span class="ot">=</span><span class="sc">-</span><span class="dv">1</span>,<span class="st">"O"</span><span class="ot">=</span><span class="dv">1</span>)</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>newt_d40<span class="sc">$</span>gx<span class="ot">&lt;-</span><span class="fu">unname</span>(lines_linha[newt_d40<span class="sc">$</span>linha])<span class="sc">+</span>newt_d40<span class="sc">$</span>lodist<span class="sc">*</span><span class="fu">unname</span>(tran_lo[newt_d40<span class="sc">$</span>lo])</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>newt_d40<span class="sc">$</span>gy<span class="ot">&lt;-</span>newt_d40<span class="sc">$</span>nsdist</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>newt_d40 <span class="ot">&lt;-</span> newt_d40 <span class="sc">%&gt;%</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">zone =</span> <span class="fu">case_when</span>(</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>    gy <span class="sc">&gt;=</span> <span class="dv">0</span> <span class="sc">&amp;</span> gy <span class="sc">&lt;=</span> <span class="dv">200</span> <span class="sc">~</span> <span class="st">"edge"</span>,</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>    gy <span class="sc">&gt;</span> <span class="dv">200</span> <span class="sc">&amp;</span> gy <span class="sc">&lt;=</span> <span class="dv">1000</span> <span class="sc">~</span> <span class="st">"interior"</span></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a><span class="do">##(2)master1020</span></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>trans<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="st">"A"</span><span class="ot">=</span><span class="dv">0</span>,<span class="st">"AA"</span><span class="ot">=</span><span class="dv">10</span>,<span class="st">"AB"</span><span class="ot">=</span><span class="dv">30</span>,<span class="st">"C"</span><span class="ot">=</span><span class="dv">100</span>,<span class="st">"F"</span><span class="ot">=</span><span class="dv">250</span>,<span class="st">"K"</span><span class="ot">=</span><span class="dv">500</span>,<span class="st">"P"</span><span class="ot">=</span><span class="dv">750</span>)</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>newt_d1020<span class="sc">$</span>gy<span class="ot">&lt;-</span><span class="fu">unname</span>(trans[newt_d1020<span class="sc">$</span>transecto])<span class="sc">+</span>newt_d1020<span class="sc">$</span>distancia</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>newt_d1020<span class="sc">$</span>gx<span class="ot">&lt;-</span>newt_d1020<span class="sc">$</span>metragem</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>newt_d1020<span class="ot">&lt;-</span>newt_d1020 <span class="sc">%&gt;%</span> </span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(newt_d1020<span class="sc">$</span>gy<span class="sc">&gt;=</span><span class="dv">0</span>)</span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>d20_39<span class="fl">.9</span>_newt_d1020<span class="ot">&lt;-</span>newt_d1020 <span class="sc">%&gt;%</span> <span class="fu">filter</span>(dap<span class="fl">.12</span><span class="sc">&gt;=</span><span class="dv">20</span> <span class="sc">&amp;</span> dap<span class="fl">.12</span><span class="sc">&lt;</span><span class="dv">40</span>)</span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>d10_19<span class="fl">.9</span>_newt_d1020<span class="ot">&lt;-</span>newt_d1020 <span class="sc">%&gt;%</span> <span class="fu">filter</span>(dap<span class="fl">.12</span><span class="sc">&gt;=</span><span class="dv">10</span> <span class="sc">&amp;</span> dap<span class="fl">.12</span><span class="sc">&lt;</span><span class="dv">20</span>)</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>newt_d1020 <span class="ot">&lt;-</span> newt_d1020 <span class="sc">%&gt;%</span></span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">zone =</span> <span class="fu">case_when</span>(</span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>    gy <span class="sc">&gt;=</span> <span class="dv">0</span> <span class="sc">&amp;</span> gy <span class="sc">&lt;=</span> <span class="dv">200</span> <span class="sc">~</span> <span class="st">"edge"</span>,</span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>    gy <span class="sc">&gt;</span> <span class="dv">200</span> <span class="sc">&amp;</span> gy <span class="sc">&lt;=</span> <span class="dv">1000</span> <span class="sc">~</span> <span class="st">"interior"</span></span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a><span class="do">##(3)master510</span></span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>trans<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="st">"A"</span><span class="ot">=</span><span class="dv">0</span>,<span class="st">"AA"</span><span class="ot">=</span><span class="dv">10</span>,<span class="st">"AB"</span><span class="ot">=</span><span class="dv">30</span>,<span class="st">"C"</span><span class="ot">=</span><span class="dv">100</span>,<span class="st">"F"</span><span class="ot">=</span><span class="dv">250</span>,<span class="st">"K"</span><span class="ot">=</span><span class="dv">500</span>,<span class="st">"P"</span><span class="ot">=</span><span class="dv">750</span>)</span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>newt_d510<span class="sc">$</span>gx<span class="ot">&lt;-</span>newt_d510<span class="sc">$</span>metragem</span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>newt_d510<span class="sc">$</span>gy<span class="ot">&lt;-</span><span class="fu">unname</span>(trans[newt_d510<span class="sc">$</span>transecto])<span class="sc">+</span>newt_d510<span class="sc">$</span>nsdist</span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>newt_d510 <span class="ot">&lt;-</span> newt_d510 <span class="sc">%&gt;%</span></span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">zone =</span> <span class="fu">case_when</span>(</span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>    gy <span class="sc">&gt;=</span> <span class="dv">0</span> <span class="sc">&amp;</span> gy <span class="sc">&lt;=</span> <span class="dv">200</span> <span class="sc">~</span> <span class="st">"edge"</span>,</span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>    gy <span class="sc">&gt;</span> <span class="dv">200</span> <span class="sc">&amp;</span> gy <span class="sc">&lt;=</span> <span class="dv">1000</span> <span class="sc">~</span> <span class="st">"interior"</span></span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(newt_d40)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  placa parcela codigo        genero        nomecomum linha lodist lo nsdist
+1  6084       A Dacmic     Dacryodes     breu_aroeira     7     11  L    107
+2  6771       A Tertet    Terminalia         cuiarana     6     10  O      4
+3  6772       A Tragla Trattinnickia breu_sucurubinha     6      4  L     47
+4  6773       A Aspexc  Aspidosperma      carapanauba     6     13  L     55
+5  6774       A Ocoacu        Ocotea    louro_abacate     6      7  O     60
+6  6775       A Aspexc  Aspidosperma      carapanauba     6     12  O     85
+  dap.12     data12 mv.12  gx  gy zone
+1   46.8 12_08_2012     v 289 107 edge
+2   71.7 12_08_2012     v 260   4 edge
+3   62.7 12_08_2012     v 246  47 edge
+4   99.8 12_08_2012     v 237  55 edge
+5   57.3 12_08_2012     v 257  60 edge
+6   53.4 12_08_2012     v 262  85 edge</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(newt_d1020)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  placa parcela codigo       genero                 especie
+1     1       A Slosin      Sloanea     sinemariensis Aubl.
+2   100       A Aspexc Aspidosperma         excelsum Benth.
+3 1000A       A Amagui      Amaioua        guianensis Aubl.
+4 1000B       A Amagui      Amaioua        guianensis Aubl.
+5  1003       A Dacmic    Dacryodes       microcarpa Cuart.
+6  1008       A Micege  Micropholis egensis (A. DC.) Pierre
+               nomecomum ns transecto distancia metragem dap.12     data12
+1 urucurana_folha_grande  N         F      -7.0      3.4   30.3 20_06_2012
+2            carapanauba  N         F      -2.5    258.0   69.8 20_06_2012
+3        canela_de_veado  S         K       1.1    102.1    9.6 20_06_2012
+4        canela_de_veado  S         K       1.1    102.1    7.3 20_06_2012
+5           breu_aroeira  N         K      -0.9    125.8   18.2 20_06_2012
+6             mangabinha  S         K       1.7    155.1   21.3 20_06_2012
+  mv.12    gy    gx     zone
+1     v 243.0   3.4 interior
+2     v 247.5 258.0 interior
+3     v 501.1 102.1 interior
+4     v 501.1 102.1 interior
+5     v 499.1 125.8 interior
+6     v 501.7 155.1 interior</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(newt_d510)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  placa parcela codigo      genero                          especie
+1 25687       C Slosin     Sloanea              sinemariensis Aubl.
+2 25706       C Strxin   Strychnos              xinguensis Krukoff.
+3 25730       C Licegl    Moquilea egleri (Prance) Sothers &amp; Prance
+4 25731       C Cococh   Coccoloba                parimensis Benth.
+5 25741       C Slosin     Sloanea              sinemariensis Aubl.
+6 25742       C Dolspa Doliocarpus           spatulifolius Kubitzki
+                  nomecomum metragem nsdist ns transecto dap.12     data12
+1    urucurana_folha_grande   1077.8    0.6  S        AB    9.6 21_06_2012
+2         cipo_falso_curare   1204.0    1.4  S        AB    9.4 21_06_2012
+3                macucurana   1396.1    2.1  S        AB    9.2 21_06_2012
+4             cipo_cocoloba   1403.5    1.3  S        AB    6.5 21_06_2012
+5    urucurana_folha_grande   1496.9    1.5  S        AB    7.6 21_06_2012
+6 cipo_de_fogo_folha_peluda   1496.9    1.5  S        AB    7.4 21_06_2012
+  mv.12     gx   gy zone
+1     v 1077.8 30.6 edge
+2     v 1204.0 31.4 edge
+3     v 1396.1 32.1 edge
+4     v 1403.5 31.3 edge
+5     v 1496.9 31.5 edge
+6     v 1496.9 31.5 edge</code></pre>
+</div>
+</div>
 </section>
 <section id="descriptive-statistics" class="level2">
 <h2 class="anchored" data-anchor-id="descriptive-statistics">Descriptive Statistics</h2>
 <p>Put code and text to calculate and present descriptive statistics for your data. This should include histograms and kernel-density plots of the distribution of each variable you will be studying. If you have multivariate data, a pairs plot is helpful for showing the correlations and covariance between different variables.</p>
 <p>Describe the probability distribution of the data: is it normal or some other distribution? Histograms and Q-Q plots can be helpful here.</p>
+<p>##According to parcela (three types of fire treatments: Control, B3yr, B1yr) and zone (edge ​​and interior) variables, the data is divided into six groups.</p>
+<p>IA: Interior Control</p>
+<p>IB: Interior B3yr</p>
+<p>IC: Interior B1yr</p>
+<p>EA: Edge Control</p>
+<p>EB: Edge B3yr</p>
+<p>EC: Edge B1yr</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>d40<span class="ot">&lt;-</span>newt_d40[,<span class="fu">c</span>(<span class="st">"parcela"</span>,<span class="st">"dap.12"</span>,<span class="st">"zone"</span>)]</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>d1020<span class="ot">&lt;-</span>newt_d1020[,<span class="fu">c</span>(<span class="st">"parcela"</span>,<span class="st">"dap.12"</span>,<span class="st">"zone"</span>)]</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>d510<span class="ot">&lt;-</span>newt_d510[,<span class="fu">c</span>(<span class="st">"parcela"</span>,<span class="st">"dap.12"</span>,<span class="st">"zone"</span>)]</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>d40<span class="sc">$</span>dbh_class<span class="ot">&lt;-</span><span class="st">"dbh of 40 cm"</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>d1020<span class="sc">$</span>dbh_class<span class="ot">&lt;-</span><span class="st">"dbh greater than 10 cm"</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>d510<span class="sc">$</span>dbh_class<span class="ot">&lt;-</span><span class="st">"dbh greater than 5 cm"</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>all_data <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(d40, d510, d1020)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>all_data <span class="ot">&lt;-</span> all_data <span class="sc">%&gt;%</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">parcela =</span> <span class="fu">case_when</span>(</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    parcela <span class="sc">==</span> <span class="st">"A"</span> <span class="sc">~</span> <span class="st">"Control"</span>,</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    parcela <span class="sc">==</span> <span class="st">"B"</span> <span class="sc">~</span> <span class="st">"B3yr"</span>,</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    parcela <span class="sc">==</span> <span class="st">"C"</span> <span class="sc">~</span> <span class="st">"B1yr"</span>,</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>summary_stats <span class="ot">&lt;-</span> all_data <span class="sc">%&gt;%</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(parcela, zone) <span class="sc">%&gt;%</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">tree_count =</span> <span class="fu">n</span>(),</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_dap =</span> <span class="fu">mean</span>(dap<span class="fl">.12</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_dap =</span> <span class="fu">median</span>(dap<span class="fl">.12</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd_dap =</span> <span class="fu">sd</span>(dap<span class="fl">.12</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">min_dap =</span> <span class="fu">min</span>(dap<span class="fl">.12</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">max_dap =</span> <span class="fu">max</span>(dap<span class="fl">.12</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(parcela, zone)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'parcela'. You can override using the
+`.groups` argument.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(summary_stats)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 8
+# Groups:   parcela [3]
+  parcela zone     tree_count mean_dap median_dap sd_dap min_dap max_dap
+  &lt;chr&gt;   &lt;chr&gt;         &lt;int&gt;    &lt;dbl&gt;      &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+1 B1yr    edge            368     35.4       32.5   20.9     5.5    144.
+2 B1yr    interior       1313     37.4       41.2   19.0     5.2    106.
+3 B3yr    edge             78     41.2       44.8   23.9     5.2    110.
+4 B3yr    interior       1150     42.7       43.9   20.4     5.3    114.
+5 Control edge           1200     24.5       17.7   17.6     4.4    114.
+6 Control interior       2042     35.5       36.3   21.6     5      124.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(all_data, <span class="fu">aes</span>(<span class="at">x =</span> dap<span class="fl">.12</span>, <span class="at">fill =</span> parcela)) <span class="sc">+</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">2</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>, <span class="at">position =</span> <span class="st">"dodge"</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(parcela<span class="sc">~</span>zone,<span class="at">nrow=</span><span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Histogram of DBH (dap.12) by Fire Treatment (within each Zone)"</span>,</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"DBH (cm)"</span>, <span class="at">y =</span> <span class="st">"Count"</span>) <span class="sc">+</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">"Set1"</span>)<span class="sc">+</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">fill =</span> <span class="st">"Fire Condition"</span>) <span class="sc">+</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">18</span>, <span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">hjust =</span> <span class="fl">0.5</span>),  </span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">12</span>),  </span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">12</span>),   </span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">6</span>), </span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">6</span>),  </span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">strip.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">12</span>)  </span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="semester-project_files/figure-html/descriptive%20statistics-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co">#kernel-density plots</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(all_data, <span class="fu">aes</span>(<span class="at">x =</span> dap<span class="fl">.12</span>, <span class="at">fill =</span> parcela)) <span class="sc">+</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">alpha =</span> <span class="fl">0.6</span>, <span class="at">color =</span> <span class="cn">NA</span>) <span class="sc">+</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>zone) <span class="sc">+</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Kernel Density of DBH by Fire Condition"</span>,</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"DBH (cm)"</span>,</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Density"</span>,</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">"Fire Condition"</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">"Set1"</span>) <span class="sc">+</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">16</span>) <span class="sc">+</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">20</span>, <span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">hjust =</span> <span class="fl">0.5</span>),</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">16</span>),</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">7</span>),</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">16</span>),</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>),</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">strip.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">16</span>, <span class="at">face =</span> <span class="st">"bold"</span>)</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="semester-project_files/figure-html/descriptive%20statistics-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><br>
+</p>
 </section>
 <section id="research-questions" class="level2">
 <h2 class="anchored" data-anchor-id="research-questions">Research Questions</h2>
-<p>This is a place to describe the research questions you want to ask about your data.</p>
-<p>It’s helpful to use tables and/or graphs to illustrate what you’re thinking about and what questions you want to ask.</p>
+<p>My research question is how edge effects and fire influence vegetation growth in the Amazon rain forest?</p>
 </section>
 <section id="hypotheses-and-tests" class="level2">
 <h2 class="anchored" data-anchor-id="hypotheses-and-tests">Hypotheses and Tests</h2>
 <p>State hypotheses about your data and describe how you will use tests to test the hypotheses</p>
 <p>Put code to implement the analysis and hypothesis tests, and include interpretations of thee</p>
-<section id="hypotheses" class="level3">
-<h3 class="anchored" data-anchor-id="hypotheses">Hypotheses</h3>
-<p>State your hypothesis or hypotheses</p>
-</section>
-<section id="methods" class="level3">
-<h3 class="anchored" data-anchor-id="methods">Methods</h3>
-<p>Describe the methods you’ll use to analyze your data in preparation for testing hypotheses. Include the analysis code.</p>
+<section id="hypotheses-and-methods" class="level3">
+<h3 class="anchored" data-anchor-id="hypotheses-and-methods">Hypotheses and Methods</h3>
+<p>Hypothesis 1: Edge effects negatively affect vegetation growth</p>
+<p>Hypothesis: Edges have smaller tree DBH than that of interiors.</p>
+<p>Analysis: One-Way ANOVA was used to compare differences in vegetation growth rates (e.g., DBH) between edge and interior.</p>
+<p>Hypothesis 2: Fire frequency and intensity negatively affect vegetation growth</p>
+<p>Hypothesis: Areas that experienced fire (B1yr or B3yr) had lower vegetation growth rates than areas that did not experience fire (control). The mean dbh was smallest for trees burned once a year(B1yr), as fire frequency was the highest.</p>
+<p>Analysis: One-Way ANOVA was used to compare differences in vegetation growth rates between different fire frequency treatments (B1yr, B3yr, control).</p>
+<p>Hypothesis 3: There are significant differences in dhb between different fire intensities in edge forests and interior forests</p>
+<p>Hypothesis：It is expected that the mean dbh of the unburned group will be greater than that of the burned group in the edge forest and interior forest groups.</p>
+<p>Analysis: One-Way ANOVA was used to compare differences.</p>
+<p>Hypothesis 4: The interaction between edge effect and fire affects vegetation growth</p>
+<p>Hypothesis: The combined effect of edge effect and fire has a greater negative impact on vegetation growth than the edge effect or fire effect alone.</p>
+<p>Analysis: Two-Way ANOVA was used to consider the interaction between <strong>edge effect (edge ​​vs.&nbsp;interior) and fire frequency (B1yr, B3yr, control)</strong> on vegetation growth.</p>
 </section>
 <section id="hypothesis-tests" class="level3">
 <h3 class="anchored" data-anchor-id="hypothesis-tests">Hypothesis Tests</h3>
-<p>Details about the hypothesis tests, including code</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>all_data<span class="sc">$</span>zone<span class="ot">&lt;-</span><span class="fu">as.factor</span>(all_data<span class="sc">$</span>zone)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>all_data<span class="sc">$</span>parcela<span class="ot">&lt;-</span><span class="fu">as.factor</span>(all_data<span class="sc">$</span>parcela)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co">#H1</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co"># One-way ANOVA: edge effect vs inland areas</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare the effects of 'zone' (edge, interior) on DBH (dap.12)</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>anova_edge <span class="ot">&lt;-</span> <span class="fu">aov</span>(dap<span class="fl">.12</span> <span class="sc">~</span> zone, <span class="at">data =</span> all_data)</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(anova_edge)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>              Df  Sum Sq Mean Sq F value Pr(&gt;F)    
+zone           1  124190  124190   297.6 &lt;2e-16 ***
+Residuals   6149 2566268     417                   
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">#H2</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co"># One-way ANOVA: The effect of different fire conditions on DBH</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare the effects of 'fire_condition' (control, B1yr, B3yr) on DBH (dap.12)</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>anova_fire <span class="ot">&lt;-</span> <span class="fu">aov</span>(dap<span class="fl">.12</span> <span class="sc">~</span> parcela, <span class="at">data =</span> all_data)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(anova_fire)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>              Df  Sum Sq Mean Sq F value Pr(&gt;F)    
+parcela        2  118656   59328   141.8 &lt;2e-16 ***
+Residuals   6148 2571802     418                   
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co">#H3</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>edge_data <span class="ot">&lt;-</span> <span class="fu">subset</span>(all_data, zone <span class="sc">==</span> <span class="st">"edge"</span>)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>interior_data <span class="ot">&lt;-</span> <span class="fu">subset</span>(all_data, zone <span class="sc">==</span> <span class="st">"interior"</span>)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="co"># ANOVA for edge</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>anova_edge_only <span class="ot">&lt;-</span> <span class="fu">aov</span>(dap<span class="fl">.12</span> <span class="sc">~</span> parcela, <span class="at">data =</span> edge_data)</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(anova_edge_only)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>              Df Sum Sq Mean Sq F value Pr(&gt;F)    
+parcela        2  48366   24183    68.8 &lt;2e-16 ***
+Residuals   1643 577500     351                   
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Tukey HSD post-hoc for edge</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>tukey_edge <span class="ot">&lt;-</span> <span class="fu">TukeyHSD</span>(anova_edge_only)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(tukey_edge)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = dap.12 ~ parcela, data = edge_data)
+
+$parcela
+                   diff         lwr        upr     p adj
+B3yr-B1yr      5.766632   0.2844941  11.248770 0.0364948
+Control-B1yr -10.914913 -13.5355823  -8.294244 0.0000000
+Control-B3yr -16.681545 -21.8205757 -11.542514 0.0000000</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ANOVA for interior</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>anova_interior_only <span class="ot">&lt;-</span> <span class="fu">aov</span>(dap<span class="fl">.12</span> <span class="sc">~</span> parcela, <span class="at">data =</span> interior_data)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(anova_interior_only)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>              Df  Sum Sq Mean Sq F value Pr(&gt;F)    
+parcela        2   38414   19207   45.46 &lt;2e-16 ***
+Residuals   4502 1901988     422                   
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Tukey HSD post-hoc for interior</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>tukey_interior <span class="ot">&lt;-</span> <span class="fu">TukeyHSD</span>(anova_interior_only)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(tukey_interior)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = dap.12 ~ parcela, data = interior_data)
+
+$parcela
+                  diff       lwr        upr     p adj
+B3yr-B1yr     5.224439  3.278191  7.1706875 0.0000000
+Control-B1yr -1.967455 -3.672098 -0.2628121 0.0187445
+Control-B3yr -7.191894 -8.968544 -5.4152435 0.0000000</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co">#H4</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Two-factor ANOVA: edge effect * Interaction of fire treatment on DBH</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare the interactions of 'zone' (edge, interior) and 'fire_condition' (control, B1yr, B3yr) on DBH (dap.12)</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>anova_interaction <span class="ot">&lt;-</span> <span class="fu">aov</span>(dap<span class="fl">.12</span> <span class="sc">~</span> zone <span class="sc">*</span> parcela, <span class="at">data =</span> all_data)</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(anova_interaction)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>               Df  Sum Sq Mean Sq F value   Pr(&gt;F)    
+zone            1  124190  124190  307.78  &lt; 2e-16 ***
+parcela         2   66740   33370   82.70  &lt; 2e-16 ***
+zone:parcela    2   20040   10020   24.83 1.81e-11 ***
+Residuals    6145 2479488     403                     
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">interaction.plot</span>(all_data<span class="sc">$</span>zone, all_data<span class="sc">$</span>parcela, all_data<span class="sc">$</span>dap<span class="fl">.12</span>, </span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">xlab =</span> <span class="st">"Zone"</span>, <span class="at">ylab =</span> <span class="st">"DBH (cm)"</span>, <span class="at">trace.label =</span> <span class="st">"Fire Condition"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="semester-project_files/figure-html/data%20analysis-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 </section>
 <section id="results-and-discussion" class="level3">
 <h3 class="anchored" data-anchor-id="results-and-discussion">Results and Discussion</h3>
-<p>Results from your hypothesis tests and discussion, interpreting your results</p>
+<p>There is no doubt edge effects and fire negatively affect vegetation growth. In the edge area, the diameter growth (DBH) of vegetation in areas that experienced fire (either 1 or 3 years ago) was significantly reduced compared to the unburned area, and the DBH of vegetation in B1yr was the smallest. This supports the hypothesis that fire has a negative impact on vegetation growth.</p>
+<p>However, the DBH of the Control (never fired) sample is smaller than that of both B1yr and B3yr samples. Contrary to expectations, it means that the B3yr sample has formed a more favorable light or nutrient environment after the fire, which promotes the rapid growth of certain plants (such as germination or pioneer species). Or the fire did not involve all the big trees, but instead cleared the lower vegetation to promote the accelerated growth of the advantageous big trees.</p>
+<p>At last, the combined effect of edge effect and fire has a greater negative impact on vegetation growth than the edge effect or fire effect alone.</p>
 </section>
 </section>
 <section id="conclusions" class="level2">
 <h2 class="anchored" data-anchor-id="conclusions">Conclusions</h2>
-<p>What did you learn? What results would a reader be interested in? What would be the next steps if you were to continue studying this data after the end of the semester?</p>
+<p>This study found that edgel effect and fire treatment had significant effects on tree growth (measured by breast diameter DBH) in Amazon forests. The tree DBH in the edge zone is significantly lower than interior zones, supporting the hypothesis that edge effects have a negative impact on vegetation growth. At the same time, under the treatment of different fire frequencies, samples with higher fire frequencies (such as B1yr) tend to show lower DBH, while samples with unfired (Control) or longer recovery period (B3yr) are relatively higher.</p>
+<p>It is worth noting that in the interior forest areas, the DBH of the B3yr sample is even higher than that of the control group, which may be related to factors such as reduced competitive pressure after fire and rapid growth of pioneer species. This phenomenon suggests that the long-term impact of fire may not be linear, but may also be regulated by spatial location. In addition, there is a significant interaction between fire and edge effects, and the negative impact of vegetation in marginal areas after experiencing fire is more obvious.</p>
+<p>If further research is conducted, more ecological variables can be considered, such as species richness, tree mortality, canopy height, etc., or the structural differences between sample sites can be controlled using a mixed effect model. In addition, combining spatial locations (such as distance from edges) and time series data will help to gain a deep understanding of the long-term effects of fire and edge effects on forest structure and function. The differences in responses of different tree species to interference can also be explored to further reveal the community succession mechanism.</p>
 </section>
 
 </main>
